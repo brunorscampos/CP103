@@ -1037,21 +1037,8 @@ ad_gen = undefined
 
 \subsection*{Problema 2}
 Definir
+
 \begin{code}
-
--- Catalan (n+1) = Catalan n * 2(2n+1)/(n+2)
--- 
--- f 0 = 2
--- f (n+1) = 4 + f n
--- g 0 = 2
--- g (n+1) = 1 + g n
--- 
--- f/g = 2(2n+1)/(n+2)
--- 
--- para ser divisao inteira:
--- 
--- catalan (n+1) = (catalan n * f n)/(g n)
-
 
 catalan:: Integer -> Integer
 catalan 0 = 1
@@ -1078,6 +1065,27 @@ seja a função pretendida.
 \textbf{NB}: usar divisão inteira.
 Apresentar de seguida a justificação da solução encontrada.
 
+\begin{Verbatim}[fontsize=\small]
+
+Formula dos numeros de Catalan:
+Catalan (n+1) = Catalan n * 2(2n+1)/(n+2)
+
+Recursiva de "2(2n+1)":
+f 0 = 2
+f (n+1) = 4 + f n
+
+Recursiva de "(n+2)":
+g 0 = 2
+g (n+1) = 1 + g n
+
+logo:
+f/g = 2(2n+1)/(n+2) = (4 + f n)/(1 + g n)
+
+para ser divisao inteira:
+catalan (n+1) = (catalan n * f n)/(g n)
+
+\end{Verbatim}
+
 \subsection*{Problema 3}
 
 \begin{code}
@@ -1102,98 +1110,61 @@ avg = p1.avg_aux
 
 \begin{code}
 
--- k :: [Double] -> Double  
--- k [a] = 1
--- k (h:t) = 1 + k t
--- 
--- average :: [Double] -> Double 
--- average [a] = a
--- average (h:t) = h + (k t * average t) / (1 + k t)
--- 
--- Fokkinga:
--- avg.in    = h.F<avg,length>
--- length.in = k.F<avg,length>
--- <=>
--- avg.[nil,cons]    = h.(id + id * <avg,length>)
--- length.[nil,cons] = k.(id + id * <avg,length>)
--- <=>
--- avg.[nil,cons]    = [h1,h2].(id + id * <avg,length>)
--- length.[nil,cons] = [k1,k2].(id + id * <avg,length>)
--- <=>
--- avg.nil     = h1
--- avg.cons    = h2.(id * <avg,length>)
--- length.nil  = k1
--- length.cons = k2.(id * <avg,length>)
--- <=>
--- avg []       = h1 []
--- avg (h:t)    = h2(h,(avg t,length t))
--- length []    = k1 []
--- length (h:t) = k2(h,(avg t,length t))
--- 
--- logo:
--- 
--- h1 = const 0
--- h2 = (p1 + p2.p1 * p2.p2)/succ.p2.p2
--- k1 = const 0
--- k2 = succ.p2.p2
--- <=>
--- h1 [] = 0
--- h2 (a,(b,c)) = (a + b * c)/(c+1)
--- k1 [] = 0
--- k2 (a,(b,c)) = c+1
--- 
--- avg_aux = (|[(0,0),<h2,k2>]|)
-
-
 avg_aux = cataList (either (split (const 0) (const 0)) (split y x)) where
   x (a,(b,c))= 1+c
   y (a,(b,c))= (a + b * c) / (1+c)
 
 \end{code}
+
+\begin{Verbatim}[fontsize=\small]
+
+length [a] = 1
+length (h:t) = 1 + length t
+
+average [a] = a
+average (h:t) = h + (length t * average t) / (1 + length t)
+
+Como average e length estão em recursividade mútua aplica-se Fokkinga:
+avg.in    = h.F<avg,length>
+length.in = k.F<avg,length>
+"<=>"
+avg.[nil,cons]    = h.(id + id * <avg,length>)
+length.[nil,cons] = k.(id + id * <avg,length>)
+"<=>"
+avg.[nil,cons]    = [h1,h2].(id + id * <avg,length>)
+length.[nil,cons] = [k1,k2].(id + id * <avg,length>)
+"<=>"
+avg.nil     = h1
+avg.cons    = h2.(id * <avg,length>)
+length.nil  = k1
+length.cons = k2.(id * <avg,length>)
+"<=>"
+avg []       = h1 []
+avg (h:t)    = h2(h,(avg t,length t))
+length []    = k1 []
+length (h:t) = k2(h,(avg t,length t))
+
+logo:
+
+h1 = const 0
+h2 = (p1 + p2.p1 * p2.p2)/succ.p2.p2
+e
+k1 = const 0
+k2 = succ.p2.p2
+"<=>"
+h1 [] = 0
+h2 (a,(b,c)) = (a + b * c)/(c+1)
+e
+k1 [] = 0
+k2 (a,(b,c)) = c+1
+
+Conclui-se que:
+avg_aux = cataList (either (split (const 0) (const 0)) (split h2 k2))
+
+\end{Verbatim}
+
 Solução para árvores de tipo \LTree:
 \begin{code}
-
--- k :: [Double] -> Double  
--- k (Leaf a) = 1
--- k (Node (a,b)) = k a + k b
--- 
--- average :: [Double] -> Double 
--- average (Leaf a) = a
--- average (Node (a,b)) = (average a * length a + average b * length b)/(length a + length b)
--- 
--- Fokkinga:
--- avg.in    = h.F<avg,length>
--- length.in = k.F<avg,length>
--- <=>
--- avg.[Leaf,Node]    = h.(id + <avg,length>²)
--- length.[Leaf,Node] = k.(id + <avg,length>²)
--- <=>
--- avg.[Leaf,Node]    = [h1,h2].(id + <avg,length>²)
--- length.[Leaf,Node] = [k1,k2].(id + <avg,length>²)
--- <=>
--- avg.Leaf     = h1
--- avg.Node     = h2.(<avg,length>²)
--- length.Leaf  = k1
--- length.Node  = k2.(<avg,length>²)
--- <=>
--- avg (Leaf a)        = h1 a
--- avg (Node (a,b))    = h2((avg a,length a),(avg b,length b))
--- length (Leaf a)     = k1 a
--- length (Node (a,b)) = k2((avg a,length a),(avg b,length b))
--- 
--- logo:
--- 
--- h1 = id
--- h2 = (p1.p1 * p1.p2 + p2.p1 * p2.p2)/(p1.p2 + p2.p2)
--- k1 = const 1
--- k2 = p1.p2 + p2.p2
--- <=>
--- h1 a = a
--- h2 ((a,b),(c,d)) = (a * b + c * d)/(b + d)
--- k1 a = 1
--- k2 ((a,b),(c,d)) = b + d
--- 
--- gene = (|[<id,const 1>,<h2,k2>]|)
 
 avgLTree = p1.cataLTree gene where
    gene = either (split id (const 1)) (split z w)
@@ -1201,6 +1172,56 @@ avgLTree = p1.cataLTree gene where
    w ((a,b),(c,d)) = b + d
    
 \end{code}
+
+\begin{Verbatim}[fontsize=\small]
+
+Usando a mesmo raciocinio do das listas:
+
+
+length (Leaf a) = 1
+length (Node (a,b)) = length a + length b
+
+average (Leaf a) = a
+average (Node (a,b)) = (average a * length a + average b * length b)/(length a + length b)
+
+Usando outra vez o Fokkinga:
+avg.in    = h.F<avg,length>
+length.in = k.F<avg,length>
+"<=>"
+avg.[Leaf,Node]    = h.(id + <avg,length>²)
+length.[Leaf,Node] = k.(id + <avg,length>²)
+"<=>"
+avg.[Leaf,Node]    = [h1,h2].(id + <avg,length>²)
+length.[Leaf,Node] = [k1,k2].(id + <avg,length>²)
+"<=>"
+avg.Leaf     = h1
+avg.Node     = h2.(<avg,length>²)
+length.Leaf  = k1
+length.Node  = k2.(<avg,length>²)
+"<=>"
+avg (Leaf a)        = h1 a
+avg (Node (a,b))    = h2((avg a,length a),(avg b,length b))
+length (Leaf a)     = k1 a
+length (Node (a,b)) = k2((avg a,length a),(avg b,length b))
+
+logo:
+
+h1 = id
+h2 = (p1.p1 * p1.p2 + p2.p1 * p2.p2)/(p1.p2 + p2.p2)
+e
+k1 = const 1
+k2 = p1.p2 + p2.p2
+"<=>"
+h1 a = a
+h2 ((a,b),(c,d)) = (a * b + c * d)/(b + d)
+e
+k1 a = 1
+k2 ((a,b),(c,d)) = b + d
+
+Conclui-se que:
+avgLTree = p1.(cataLTree either (split id (const 1)) (split h2 k2))
+
+\end{Verbatim}
 
 \subsection*{Problema 5}
 Inserir em baixo o código \Fsharp\ desenvolvido, entre \verb!\begin{verbatim}! e \verb!\end{verbatim}!:

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2021.5.14)  10 JUN 2021 16:08
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2021.5.14)  11 JUN 2021 22:24
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -903,107 +903,39 @@ Overfull \hbox (103.62514pt too wide) in paragraph at lines 1577--1588
 
 \openout5 = `cp2021t.ptb'.
 
-
-! Missing $ inserted.
-<inserted text> 
-                $
-l.1793 \end{hscode}
-                   \resethooks
-? 
-! Extra }, or forgotten $.
-\mbox  #1->\leavevmode \hbox {#1}
-                                 
-l.1793 \end{hscode}
-                   \resethooks
-? 
-! Missing } inserted.
-<inserted text> 
-                }
-l.1793 \end{hscode}
-                   \resethooks
-? 
-! Missing $ inserted.
-<inserted text> 
-                $
-l.1793 \end{hscode}
-                   \resethooks
-? 
-! Missing $ inserted.
-<inserted text> 
-                $
-l.1793 \end{hscode}
-                   \resethooks
-? 
-! Extra }, or forgotten $.
-\mbox  #1->\leavevmode \hbox {#1}
-                                 
-l.1793 \end{hscode}
-                   \resethooks
-? 
-! Missing } inserted.
-<inserted text> 
-                }
-l.1793 \end{hscode}
-                   \resethooks
-? 
-! Missing $ inserted.
-<inserted text> 
-                $
-l.1793 \end{hscode}
-                   \resethooks
-? 
-! Missing $ inserted.
-<inserted text> 
-                $
-l.1793 \end{hscode}
-                   \resethooks
-? 
-! Extra }, or forgotten $.
-\mbox  #1->\leavevmode \hbox {#1}
-                                 
-l.1793 \end{hscode}
-                   \resethooks
-? 
-! Missing } inserted.
-<inserted text> 
-                }
-l.1793 \end{hscode}
-                   \resethooks
-? 
-! Missing $ inserted.
-<inserted text> 
-                $
-l.1793 \end{hscode}
-                   \resethooks
-? 
-[14]
+ [14]
 \openout5 = `cp2021t.ptb'.
 
- [15] (./cp2021t.ind [16] [17
+LaTeX Font Info:    Trying to load font information for TS1+pcr on input line 1
+792.
+ (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ts1pcr.fd
+File: ts1pcr.fd 2001/06/04 font definitions for TS1/pcr.
+) [15]
+(./cp2021t.ind [16] [17
 
 
 ]) (./cp2021t.bbl)
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1913.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1845.
  [18
 
 ]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 1913.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 1845.
  (./cp2021t.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1913.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1913.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1845.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1845.
 
 Package rerunfilecheck Info: File `cp2021t.out' has not changed.
 (rerunfilecheck)             Checksum: 7ABFEEFBC6EDEE4EAEC2BDEF142178CE;514.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1913.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1845.
  ) 
 Here is how much of TeX's memory you used:
- 13355 strings out of 483090
- 194181 string characters out of 5963929
+ 13376 strings out of 483090
+ 194493 string characters out of 5963929
  525039 words of memory out of 5000000
- 27961 multiletter control sequences out of 15000+600000
- 568152 words of font info for 125 fonts, out of 8000000 for 9000
+ 27978 multiletter control sequences out of 15000+600000
+ 568445 words of font info for 126 fonts, out of 8000000 for 9000
  61 hyphenation exceptions out of 8191
- 48i,18n,77p,3290b,499s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 48i,18n,77p,3290b,533s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texliv
 e/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texlive/texm
 f-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist
@@ -1030,7 +962,7 @@ exmf-dist/fonts/type1/urw/palatino/uplr8a.pfb></usr/share/texlive/texmf-dist/fo
 nts/type1/urw/palatino/uplri8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/p
 ublic/xypic/xyatip10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/xypi
 c/xybtip10.pfb>
-Output written on cp2021t.pdf (18 pages, 340692 bytes).
+Output written on cp2021t.pdf (18 pages, 341920 bytes).
 PDF statistics:
  441 PDF objects out of 1000 (max. 8388607)
  388 compressed objects within 4 object streams
