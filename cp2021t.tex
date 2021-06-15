@@ -1550,49 +1550,197 @@ São dadas:
 \ColumnHook
 \end{hscode}\resethooks
 Definir:
+\begin{hscode}\SaveRestoreHook
+\column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{E}{@{}>{\hspre}l<{\hspost}@{}}%
+\>[B]{}\Varid{outExpAr}\;(\Conid{X})\mathrel{=}i_1\;(){}\<[E]%
+\\
+\>[B]{}\Varid{outExpAr}\;(\Conid{N}\;\Varid{a})\mathrel{=}i_2\;(i_1\;\Varid{a}){}\<[E]%
+\\
+\>[B]{}\Varid{outExpAr}\;(\Conid{Bin}\;\Varid{op}\;\Varid{a}\;\Varid{b})\mathrel{=}i_2\;(i_2\;(i_1\;(\Varid{op},(\Varid{a},\Varid{b})))){}\<[E]%
+\\
+\>[B]{}\Varid{outExpAr}\;(\Conid{Un}\;\Varid{a}\;\Varid{b})\mathrel{=}i_2\;(i_2\;(i_2\;(\Varid{a},\Varid{b}))){}\<[E]%
+\\
+\>[B]{}\mbox{\onelinecomment }{}\<[E]%
+\\
+\>[B]{}\Varid{recExpAr}\;\Varid{f}\mathrel{=}\Varid{baseExpAr'}\;\Varid{id}\;\Varid{f}{}\<[E]%
+\\
+\>[B]{}\Varid{baseExpAr'}\;\Varid{g}\;\Varid{f}\mathrel{=}\Varid{baseExpAr}\;\Varid{id}\;\Varid{g}\;\Varid{id}\;\Varid{f}\;\Varid{f}\;\Varid{id}\;\Varid{f}{}\<[E]%
+\\
+\>[B]{}\mbox{\onelinecomment }{}\<[E]%
+\\[\blanklineskip]%
+\>[B]{}\Varid{g\char95 eval\char95 exp}\;\Varid{a}\mathrel{=}\alt{\Varid{g1}}{\alt{\Varid{g2}}{\alt{\Varid{g3}}{\Varid{g4}}}}\;\mathbf{where}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Varid{g1}\;()\mathrel{=}\Varid{a}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Varid{g2}\;(\Varid{b})\mathrel{=}\Varid{b}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Varid{g3}\;(\Conid{Sum},(\Varid{b},\Varid{c}))\mathrel{=}(\mathbin{+})\;\Varid{b}\;\Varid{c}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Varid{g3}\;(\Conid{Product},(\Varid{b},\Varid{c}))\mathrel{=}(\mathbin{*})\;\Varid{b}\;\Varid{c}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Varid{g4}\;(\Conid{Negate},\Varid{b})\mathrel{=}\mathbin{-}\Varid{b}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Varid{g4}\;(\Conid{E},\Varid{b})\mathrel{=}\Varid{expd}\;\Varid{b}{}\<[E]%
+\ColumnHook
+\end{hscode}\resethooks
+
+\begin{Verbatim}[fontsize=\small]
+
+Esta função é o gene do cata que "na parte de baixo" tem como tipos : 
+ Int <-------- () +  Int  + ((BinOp,(d,d) >< (UnOp,d))
+tendo em conta o tipo, basta parametrizar a função de acordo com o tipo mostrado.
+
+
+optmize_eval a = hyloExpAr (gopt a) clean
+                             cata     ana-> cria estruturas do mesmo tipo
+  
+\end{Verbatim}
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{20}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\Varid{outExpAr}\mathrel{=}\bot {}\<[E]%
+\>[B]{}\Varid{clean}\;(\Conid{X})\mathrel{=}i_1\;(){}\<[E]%
+\\
+\>[B]{}\Varid{clean}\;(\Conid{N}\;\Varid{a})\mathrel{=}i_2\;(i_1\;\Varid{a}){}\<[E]%
+\\
+\>[B]{}\Varid{clean}\;(\Conid{Bin}\;\Varid{op}\;\Varid{a}\;\Varid{b})\mid (\Varid{op}\equiv \Conid{Product}\mathrel{\wedge}(\Varid{a}\equiv (\Conid{N}\;\mathrm{0})))\mathrel{=}\Varid{outExpAr}\;\Varid{a}{}\<[E]%
+\\
+\>[B]{}\hsindent{20}{}\<[20]%
+\>[20]{}\mid (\Varid{op}\equiv \Conid{Product}\mathrel{\wedge}(\Varid{b}\equiv (\Conid{N}\;\mathrm{0})))\mathrel{=}\Varid{outExpAr}\;\Varid{b}{}\<[E]%
+\\
+\>[B]{}\hsindent{20}{}\<[20]%
+\>[20]{}\mid \Varid{otherwise}\mathrel{=}i_2\;(i_2\;(i_1\;(\Varid{op},(\Varid{a},\Varid{b}))))\mbox{\onelinecomment Como verifico se a == N a}{}\<[E]%
+\\
+\>[B]{}\Varid{clean}\;(\Conid{Un}\;\Varid{a}\;\Varid{b})\mathrel{=}i_2\;(i_2\;(i_2\;(\Varid{a},\Varid{b}))){}\<[E]%
 \\
 \>[B]{}\mbox{\onelinecomment }{}\<[E]%
 \\
-\>[B]{}\Varid{recExpAr}\mathrel{=}\bot {}\<[E]%
-\\
-\>[B]{}\mbox{\onelinecomment }{}\<[E]%
-\\
-\>[B]{}\Varid{g\char95 eval\char95 exp}\mathrel{=}\bot {}\<[E]%
-\\
-\>[B]{}\mbox{\onelinecomment }{}\<[E]%
-\\
-\>[B]{}\Varid{clean}\mathrel{=}\bot {}\<[E]%
-\\
-\>[B]{}\mbox{\onelinecomment }{}\<[E]%
-\\
-\>[B]{}\Varid{gopt}\mathrel{=}\bot {}\<[E]%
+\>[B]{}\Varid{gopt}\;\Varid{a}\mathrel{=}\Varid{g\char95 eval\char95 exp}\;\Varid{a}{}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{5}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{11}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{20}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{25}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
 \>[B]{}\Varid{sd\char95 gen}\mathbin{::}\Conid{Floating}\;\Varid{a}\Rightarrow {}\<[E]%
 \\
 \>[B]{}\hsindent{5}{}\<[5]%
 \>[5]{}()+(\Varid{a}+((\Conid{BinOp},((\Conid{ExpAr}\;\Varid{a},\Conid{ExpAr}\;\Varid{a}),(\Conid{ExpAr}\;\Varid{a},\Conid{ExpAr}\;\Varid{a})))+(\Conid{UnOp},(\Conid{ExpAr}\;\Varid{a},\Conid{ExpAr}\;\Varid{a}))))\to (\Conid{ExpAr}\;\Varid{a},\Conid{ExpAr}\;\Varid{a}){}\<[E]%
 \\
-\>[B]{}\Varid{sd\char95 gen}\mathrel{=}\bot {}\<[E]%
+\>[B]{}\Varid{sd\char95 gen}\mathrel{=}{}\<[11]%
+\>[11]{}\alt{\Varid{g1}}{\alt{\Varid{g2}}{\alt{\Varid{g3}}{\Varid{g4}}}}\;\mathbf{where}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Varid{g1}\;()\mathrel{=}(\Conid{X},\Conid{N}\;\mathrm{1}){}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Varid{g2}\;(\Varid{b})\mathrel{=}(\Conid{N}\;\Varid{b},\Conid{N}\;\mathrm{0}){}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Varid{g3}\;(\Conid{Sum},((\Varid{b},\Varid{c}),(\Varid{d},\Varid{e})))\mathrel{=}(\Conid{Bin}\;\Conid{Sum}\;\Varid{b}\;\Varid{d},\Conid{Bin}\;\Conid{Sum}\;\Varid{c}\;\Varid{e}){}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Varid{g3}\;(\Conid{Product},((\Varid{b},\Varid{c}),(\Varid{d},\Varid{e})))\mathrel{=}(\Conid{Bin}\;\Conid{Product}\;\Varid{b}\;\Varid{d},\Conid{Bin}\;\Conid{Sum}\;(\Conid{Bin}\;\Conid{Product}\;\Varid{b}\;\Varid{e})\;(\Conid{Bin}\;\Conid{Product}\;\Varid{c}\;\Varid{d})){}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Varid{g4}\;(\Conid{Negate},(\Varid{b},\Varid{c}))\mathrel{=}{}\<[25]%
+\>[25]{}(\Conid{Un}\;\Conid{Negate}\;\Varid{b},\Conid{Un}\;\Conid{Negate}\;\Varid{c}){}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Varid{g4}\;(\Conid{E},(\Varid{b},\Varid{c}))\mathrel{=}{}\<[20]%
+\>[20]{}(\Conid{Un}\;\Conid{E}\;\Varid{b},\Conid{Bin}\;\Conid{Product}\;(\Conid{Un}\;\Conid{E}\;\Varid{b})\;\Varid{c}){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
 
 \begin{hscode}\SaveRestoreHook
 \column{B}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{3}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{11}{@{}>{\hspre}c<{\hspost}@{}}%
+\column{11E}{@{}l@{}}%
+\column{14}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{20}{@{}>{\hspre}l<{\hspost}@{}}%
+\column{25}{@{}>{\hspre}l<{\hspost}@{}}%
 \column{E}{@{}>{\hspre}l<{\hspost}@{}}%
-\>[B]{}\Varid{ad\char95 gen}\mathrel{=}\bot {}\<[E]%
+\>[B]{}\Varid{ad\char95 gen}\;\Varid{a}{}\<[11]%
+\>[11]{}\mathrel{=}{}\<[11E]%
+\>[14]{}\alt{\Varid{g1}}{\alt{\Varid{g2}}{\alt{\Varid{g3}}{\Varid{g4}}}}\;\mathbf{where}{}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Varid{g1}\;()\mathrel{=}(\Varid{a},\mathrm{1}){}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Varid{g2}\;(\Varid{b})\mathrel{=}(\Varid{b},\mathrm{0}){}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Varid{g3}\;(\Conid{Sum},((\Varid{b},\Varid{c}),(\Varid{d},\Varid{e})))\mathrel{=}(\Varid{b}\mathbin{+}\Varid{d},\Varid{c}\mathbin{+}\Varid{e}){}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Varid{g3}\;(\Conid{Product},((\Varid{b},\Varid{c}),(\Varid{d},\Varid{e})))\mathrel{=}(\Varid{b}\mathbin{*}\Varid{d},(\Varid{b}\mathbin{*}\Varid{e})\mathbin{+}(\Varid{c}\mathbin{*}\Varid{d})){}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Varid{g4}\;(\Conid{Negate},(\Varid{b},\Varid{c}))\mathrel{=}{}\<[25]%
+\>[25]{}(\mathbin{-}\Varid{b},\mathbin{-}\Varid{c}){}\<[E]%
+\\
+\>[B]{}\hsindent{3}{}\<[3]%
+\>[3]{}\Varid{g4}\;(\Conid{E},(\Varid{b},\Varid{c}))\mathrel{=}{}\<[20]%
+\>[20]{}(\Varid{expd}\;\Varid{b},(\Varid{expd}\;\Varid{b})\mathbin{*}\Varid{c}){}\<[E]%
 \ColumnHook
 \end{hscode}\resethooks
+
+Apartir daqui estou a tentar copiar o processo de resolução que o meu colega 
+fez a partir de fotos do caderno dele, já que ele está hospitalizado e não consegue
+trabalhar no projeto, logo é provável que haja imprecisões:  
+
+\begin{Verbatim}[fontsize=\small]
+
+i1 = out.(const X)
+i2.i1 = out.N
+i2.i2.i1 = out.Bin
+i2.i2.i2 = out.Ûn
+={Prop. igualdade reflexiva}
+out.(const X) = i1
+out.N = i2.i1
+out.Bin = i2.i2.i1
+out.Ûn = i2.i2.i2
+={Igualdade extencional e def. composição}
+out(const X) = i1 x -- () ?
+out(N x) = i2(i1 x)                   
+out(Bin op a b) = i2(i2(i1 op a b))
+out(Ûn (a,b)) = i2(i2(i2 (a,b)))
+={Def. de uncurry(84)}
+...
+...
+
+
+calcLine [] = const nil
+calcLine (p:x) = curry.g p (calcLine x)
+"<=>"
+calcLine.nil x = const nil x
+calcLine.cons(p,x) = g.(id >< calLine x) (p,x)
+"<=>"
+calcLine.in = [const nil,g.(id >< calcLine)]
+"<=>"
+calcLine.in = [const nil.id,g.(id >< calcLine)]
+"<=>"
+calcLine.in = [const nil,g].(id + id >< calcLine)
+"<=>"
+calcLine = cata([const nil,g])
+
+\end{Verbatim}
 
 \subsection*{Problema 2}
 Definir
@@ -1684,6 +1832,30 @@ catalan (n+1) = (catalan n * f n)/(g n)
 \ColumnHook
 \end{hscode}\resethooks
 
+\begin{Verbatim}[fontsize=\small]
+
+O meu colega tambem tinha começado a ver se conseguiria resolver este exercicio,
+enquanto eu trabalhava nos outros projetos, pouco antes de ser hospitalizado. Não
+sei se vale algo mas decidi por na mesma:
+
+calcLine :: NPoint -> (NPoint -> OverTime NPoint)
+calcLine a = cataList h where
+   h (x:xs) = either ( nil) (g10 x)
+
+g10 :: (Rational, NPoint -> OverTime NPoint) -> (NPoint -> OverTime NPoint)
+g10 (d,f) l = case l of
+       []     -> nil
+       (x:xs) -> \z -> concat $ (sequenceA [singl . linear1d d x, f xs]) z
+
+deCasteljau :: [NPoint] -> OverTime NPoint
+deCasteljau = hyloAlgForm alg coalg where
+   coalg = undefined
+   alg = undefined
+
+hyloAlgForm = undefined
+  
+\end{Verbatim}
+
 \subsection*{Problema 4}
 
 Solução para listas não vazias:
@@ -1720,16 +1892,16 @@ Como average e length estão em recursividade mútua aplica-se Fokkinga:
 avg.in    = h.F<avg,length>
 length.in = k.F<avg,length>
 "<=>"
-avg.[nil,cons]    = h.(id + id * <avg,length>)
-length.[nil,cons] = k.(id + id * <avg,length>)
+avg.[nil,cons]    = h.(id + id >< <avg,length>)
+length.[nil,cons] = k.(id + id >< <avg,length>)
 "<=>"
-avg.[nil,cons]    = [h1,h2].(id + id * <avg,length>)
-length.[nil,cons] = [k1,k2].(id + id * <avg,length>)
+avg.[nil,cons]    = [h1,h2].(id + id >< <avg,length>)
+length.[nil,cons] = [k1,k2].(id + id >< <avg,length>)
 "<=>"
 avg.nil     = h1
-avg.cons    = h2.(id * <avg,length>)
+avg.cons    = h2.(id >< <avg,length>)
 length.nil  = k1
-length.cons = k2.(id * <avg,length>)
+length.cons = k2.(id >< <avg,length>)
 "<=>"
 avg []       = h1 []
 avg (h:t)    = h2(h,(avg t,length t))
@@ -1751,8 +1923,7 @@ k1 [] = 0
 k2 (a,(b,c)) = c+1
 
 Conclui-se que:
-
-avg_aux = cataList (either (split (const 0) (const 0)) (split h2 k2))
+avg_aux = cata ([split (const 0) (const 0),split h2 k2])
 
 \end{Verbatim}
 
@@ -1819,7 +1990,8 @@ e
 k1 a = 1
 k2 ((a,b),(c,d)) = b + d
 
-avgLTree = cataLTree either (split id (const 1)) (split h2 k2)
+Conclui-se que:
+avgLTree = p1.(cata ([split id (const 1),split h2 k2]))
 
 \end{Verbatim}
 

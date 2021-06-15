@@ -1012,28 +1012,113 @@ ad :: Floating a => a -> ExpAr a -> a
 ad v = p2 . cataExpAr (ad_gen v)
 \end{code}
 Definir:
+\begin{code}
+outExpAr (X)= i1 ()
+outExpAr (N a)= i2(i1 a)
+outExpAr (Bin op a b)= i2(i2(i1 (op, (a, b))))
+outExpAr (Un a b)= i2(i2(i2 (a, b)))
+---
+recExpAr f = baseExpAr' id f
+baseExpAr' g f = baseExpAr id g id f f id f
+---
+
+g_eval_exp a = either g1 (either g2 (either g3 g4)) where
+  g1 () = a
+  g2 (b) = b
+  g3 (Sum ,(b, c)) = (+) b c
+  g3 (Product ,(b ,c)) = (*) b c 
+  g4 (Negate ,b) = - b 
+  g4 (E ,b) = expd b
+
+\end{code}
+
+\begin{Verbatim}[fontsize=\small]
+
+Esta função é o gene do cata que "na parte de baixo" tem como tipos : 
+ Int <-------- () +  Int  + ((BinOp,(d,d) >< (UnOp,d))
+tendo em conta o tipo, basta parametrizar a função de acordo com o tipo mostrado.
+
+
+optmize_eval a = hyloExpAr (gopt a) clean
+                             cata     ana-> cria estruturas do mesmo tipo
+  
+\end{Verbatim}
 
 \begin{code}
-outExpAr = undefined 
+
+clean (X) = i1 ()
+clean (N a)= i2(i1 a)
+clean (Bin op a b) | (op == Product && (a == (N 0))) = outExpAr a 
+                   | (op == Product && (b == (N 0))) = outExpAr b
+                   | otherwise = i2(i2(i1 (op, (a, b)))) --Como verifico se a == N a
+clean (Un a b)= i2(i2(i2 (a, b)))
 ---
-recExpAr = undefined
----
-g_eval_exp = undefined
----
-clean = undefined
----
-gopt = undefined 
+gopt a = g_eval_exp a 
+
 \end{code}
 
 \begin{code}
 sd_gen :: Floating a =>
     Either () (Either a (Either (BinOp, ((ExpAr a, ExpAr a), (ExpAr a, ExpAr a))) (UnOp, (ExpAr a, ExpAr a)))) -> (ExpAr a, ExpAr a)
-sd_gen = undefined
+sd_gen =  either g1 (either g2 (either g3 g4)) where
+  g1 () = (X , N 1)
+  g2 (b) = (N b,N 0)
+  g3 (Sum ,((b,c), (d,e))) = (Bin Sum b d,Bin Sum c e)
+  g3 (Product ,((b,c), (d,e))) = (Bin Product b d ,Bin Sum (Bin Product b e) (Bin Product c d))
+  g4 (Negate ,(b,c)) =  (Un Negate b,Un Negate c)
+  g4 (E ,(b,c)) =  (Un E b,Bin Product (Un E b) c)
 \end{code}
 
 \begin{code}
-ad_gen = undefined
+ad_gen a  =  either g1 (either g2 (either g3 g4)) where
+  g1 () = (a ,1)
+  g2 (b) = (b,0)
+  g3 (Sum ,((b,c), (d,e))) = ( b + d, c + e)
+  g3 (Product ,((b,c), (d,e))) = (b * d , (b * e) + (c * d))
+  g4 (Negate ,(b,c)) =  (-b, -c)
+  g4 (E ,(b,c)) =  (expd b, (expd b) * c)
 \end{code}
+
+Apartir daqui estou a tentar copiar o processo de resolução que o meu colega 
+fez a partir de fotos do caderno dele, já que ele está hospitalizado e não consegue
+trabalhar no projeto, logo é provável que haja imprecisões:  
+
+\begin{Verbatim}[fontsize=\small]
+
+i1 = out.(const X)
+i2.i1 = out.N
+i2.i2.i1 = out.Bin
+i2.i2.i2 = out.Ûn
+={Prop. igualdade reflexiva}
+out.(const X) = i1
+out.N = i2.i1
+out.Bin = i2.i2.i1
+out.Ûn = i2.i2.i2
+={Igualdade extencional e def. composição}
+out(const X) = i1 x -- () ?
+out(N x) = i2(i1 x)                   
+out(Bin op a b) = i2(i2(i1 op a b))
+out(Ûn (a,b)) = i2(i2(i2 (a,b)))
+={Def. de uncurry(84)}
+...
+...
+
+
+calcLine [] = const nil
+calcLine (p:x) = curry.g p (calcLine x)
+"<=>"
+calcLine.nil x = const nil x
+calcLine.cons(p,x) = g.(id >< calLine x) (p,x)
+"<=>"
+calcLine.in = [const nil,g.(id >< calcLine)]
+"<=>"
+calcLine.in = [const nil.id,g.(id >< calcLine)]
+"<=>"
+calcLine.in = [const nil,g].(id + id >< calcLine)
+"<=>"
+calcLine = cata([const nil,g])
+
+\end{Verbatim}
 
 \subsection*{Problema 2}
 Definir
@@ -1101,6 +1186,30 @@ deCasteljau = hyloAlgForm alg coalg where
 hyloAlgForm = undefined
 \end{code}
 
+\begin{Verbatim}[fontsize=\small]
+
+O meu colega tambem tinha começado a ver se conseguiria resolver este exercicio,
+enquanto eu trabalhava nos outros projetos, pouco antes de ser hospitalizado. Não
+sei se vale algo mas decidi por na mesma:
+
+calcLine :: NPoint -> (NPoint -> OverTime NPoint)
+calcLine a = cataList h where
+   h (x:xs) = either ( nil) (g10 x)
+
+g10 :: (Rational, NPoint -> OverTime NPoint) -> (NPoint -> OverTime NPoint)
+g10 (d,f) l = case l of
+       []     -> nil
+       (x:xs) -> \z -> concat $ (sequenceA [singl . linear1d d x, f xs]) z
+
+deCasteljau :: [NPoint] -> OverTime NPoint
+deCasteljau = hyloAlgForm alg coalg where
+   coalg = undefined
+   alg = undefined
+
+hyloAlgForm = undefined
+  
+\end{Verbatim}
+
 \subsection*{Problema 4}
 
 Solução para listas não vazias:
@@ -1128,16 +1237,16 @@ Como average e length estão em recursividade mútua aplica-se Fokkinga:
 avg.in    = h.F<avg,length>
 length.in = k.F<avg,length>
 "<=>"
-avg.[nil,cons]    = h.(id + id * <avg,length>)
-length.[nil,cons] = k.(id + id * <avg,length>)
+avg.[nil,cons]    = h.(id + id >< <avg,length>)
+length.[nil,cons] = k.(id + id >< <avg,length>)
 "<=>"
-avg.[nil,cons]    = [h1,h2].(id + id * <avg,length>)
-length.[nil,cons] = [k1,k2].(id + id * <avg,length>)
+avg.[nil,cons]    = [h1,h2].(id + id >< <avg,length>)
+length.[nil,cons] = [k1,k2].(id + id >< <avg,length>)
 "<=>"
 avg.nil     = h1
-avg.cons    = h2.(id * <avg,length>)
+avg.cons    = h2.(id >< <avg,length>)
 length.nil  = k1
-length.cons = k2.(id * <avg,length>)
+length.cons = k2.(id >< <avg,length>)
 "<=>"
 avg []       = h1 []
 avg (h:t)    = h2(h,(avg t,length t))
@@ -1159,7 +1268,7 @@ k1 [] = 0
 k2 (a,(b,c)) = c+1
 
 Conclui-se que:
-avg_aux = cataList (either (split (const 0) (const 0)) (split h2 k2))
+avg_aux = cata ([split (const 0) (const 0),split h2 k2])
 
 \end{Verbatim}
 
@@ -1219,7 +1328,7 @@ k1 a = 1
 k2 ((a,b),(c,d)) = b + d
 
 Conclui-se que:
-avgLTree = p1.(cataLTree either (split id (const 1)) (split h2 k2))
+avgLTree = p1.(cata ([split id (const 1),split h2 k2]))
 
 \end{Verbatim}
 
